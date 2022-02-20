@@ -26,4 +26,4 @@ output/
 resources/
 media/
 
-deployment/certbot
+deployment/certbot/*
