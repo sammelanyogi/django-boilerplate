@@ -3,4 +3,4 @@ scrape_configs:
   scrape_interval: 5s
   static_configs:
   - targets:
-    - vhoye_cadvisor:8080
+    - cadvisor:8080
