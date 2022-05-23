@@ -8,6 +8,7 @@ $GIT_DIR/info/exclude
 *.py[co]
 .tox/
 venv
+env
 __pycache__
 MANIFEST
 dist/
