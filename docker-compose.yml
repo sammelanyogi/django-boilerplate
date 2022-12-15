@@ -1,5 +1,12 @@
 version: "3.9"
-   
+
+x-logging: &logging-steps
+  logging:
+    driver: "json-file"
+    options:
+      max-size: "50m"
+      max-file: "5"
+
 services:
   backend:
     build: backend/.
@@ -7,11 +14,7 @@ services:
       - .env
     volumes:
       - static:/backend/static
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "50m"
-        max-file: "5"
+    <<: *logging-steps
     container_name: backend 
 
   nginx:
@@ -26,11 +29,7 @@ services:
       - "80:80"
       - "443:443"
     command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "50m"
-        max-file: "5"
+    <<: *logging-steps
     container_name: nginx
 
   certbot:
@@ -40,11 +39,7 @@ services:
       - ./deployment/certbot/conf:/etc/letsencrypt
       - ./deployment/certbot/www:/var/www/certbot
     entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "50m"
-        max-file: "5"
+    <<: *logging-steps
 
   prometheus:
     image: prom/prometheus:latest
@@ -55,11 +50,7 @@ services:
     - --config.file=/etc/prometheus/prometheus.yaml
     volumes:
     - ./prometheus/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "50m"
-        max-file: "5"
+    <<: *logging-steps
     depends_on:
     - cadvisor
 
@@ -73,11 +64,7 @@ services:
     - /var/run:/var/run:rw
     - /sys:/sys:ro
     - /var/lib/docker/:/var/lib/docker:ro
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "50m"
-        max-file: "5"
+    <<: *logging-steps
 
 volumes:
   static:
